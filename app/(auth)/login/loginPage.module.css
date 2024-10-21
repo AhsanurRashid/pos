@@ -1,0 +1,6 @@
+.login_page {
+    @apply w-full h-screen flex flex-1 items-center justify-center;
+}
+.toogle_theme {
+    @apply fixed top-1 right-0;
+}

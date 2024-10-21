@@ -1,0 +1,9 @@
+.navbar {
+    @apply shadow-md;
+}
+.navbar_wrapper {
+    @apply container mx-auto flex items-center justify-between px-5 py-2;
+}
+.navbar_infos {
+    @apply flex items-center;
+}
