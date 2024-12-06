@@ -14,28 +14,55 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import Logo from "@/components/layouts/Navbar/Logo"
 import { Separator } from "@/components/ui/separator"
 import { UserFormValidation } from "@/lib/validation"
+import { useToast } from "@/hooks/use-toast"
+import { postForLogin } from "@/actions/postLogin"
+import { useUserStore } from "@/components/layouts/Navbar/UserProfile/_store"
 
+import Cookies from "js-cookie"
 
 const LoginForm = () => {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const { toast } = useToast()
+
+    const { setUser } = useUserStore((state) => state)
 
     const form = useForm<z.infer<typeof UserFormValidation>>({
         resolver: zodResolver(UserFormValidation),
         defaultValues: {
-            name: "",
-            email: "",
-            password: ""
+            UserName: "",
+            Password: ""
         },
     })
  
-    function onSubmit(values: z.infer<typeof UserFormValidation>) {
+
+    
+    const onSubmit = async(values: z.infer<typeof UserFormValidation>) => {
         setIsLoading(true)
-        setTimeout(() => {
-            console.log(values)
-            setIsLoading(false)
+        try {
+            const result = await postForLogin(values)
+
+            if(result.success) {
+                Cookies.set("user", JSON.stringify(result.user), { expires: 7 })
+                setUser(result.user)
+            }
+
+            toast({
+                title: "Login Successful",
+                description: "You have been logged in successfully.",
+            })
+
             router.push('/shop')
-        }, 1000)
+        } catch(error){
+            console.log(error)
+            toast({
+                title: "Login Failed",
+                description: "There was an error logging in. Please try again.",
+                variant: "destructive",
+            })
+        } finally{
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -50,21 +77,14 @@ const LoginForm = () => {
                         <CustomFormFiled 
                             control={form.control} 
                             fieldType={FormFieldType.INPUT}
-                            name="name"
+                            name="UserName"
                             placeholder="John Doe"
                             label="Employe Name"
                         />
                         <CustomFormFiled 
                             control={form.control} 
-                            fieldType={FormFieldType.EMAIL}
-                            name="email"
-                            placeholder="johndoe@gmail.com"
-                            label="Email"
-                        />
-                        <CustomFormFiled 
-                            control={form.control} 
                             fieldType={FormFieldType.PASSWORD}
-                            name="password"
+                            name="Password"
                             placeholder="Enter your password"
                             label="Password"
                         />

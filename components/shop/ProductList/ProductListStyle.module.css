@@ -1,0 +1,6 @@
+.product_list_wrapper {
+    @apply w-full  max-h-[calc(100vh-130px)] overflow-y-auto;
+}
+.product_list {
+    @apply grid grid-cols-1 gap-2 w-full;
+}

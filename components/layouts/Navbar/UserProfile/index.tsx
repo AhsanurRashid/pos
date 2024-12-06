@@ -1,9 +1,11 @@
-import {
-    LogOut,
-    User
-  } from "lucide-react"
+"use client"
 
-  import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useRouter } from "next/navigation"
+import { LogOut, CircleUserRound} from "lucide-react"
+
+import Cookies from 'js-cookie'
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
   import {
     DropdownMenu,
@@ -14,22 +16,17 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+  import { User } from "@/lib/types"
   
-  const UserProfile = () => {
-    // const items = [
-    //     {
-    //         id: 1,
-    //         icon: 'User',
-    //         name: 'profile',
-    //         short_cut: '⇧⌘P' 
-    //     },
-    //     {
-    //         id: 2,
-    //         icon: 'LogOut',
-    //         name: 'log out',
-    //         short_cut: '⇧⌘Q'
-    //     }
-    // ]
+  const UserProfile = ({ user, deleteUser }:{ user: User, deleteUser: () => void}) => {
+    const router = useRouter()
+    
+    const handleLogout = () => {
+      Cookies.remove('user')
+      deleteUser()
+      router.push("/login")
+    }
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -41,13 +38,13 @@ import {
         <DropdownMenuContent className="w-40 mr-2">
           <DropdownMenuGroup>
             <DropdownMenuItem className="cursor-pointer">
-              <User />
-              <span>Profile</span>
+              <CircleUserRound />
+              <span>{user.userName ? user.userName : 'profile'}</span>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem onClick={() => handleLogout()} className="cursor-pointer">
             <LogOut />
             <span>Log out</span>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
